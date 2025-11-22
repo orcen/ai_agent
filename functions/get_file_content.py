@@ -1,6 +1,8 @@
 import os.path
 from google.genai import types
 
+from config import MAX_CHARS
+
 schema_get_file_content = types.FunctionDeclaration(
     name="get_file_content",
     description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
@@ -25,7 +27,7 @@ def get_file_content(working_directory, file_path):
     if os.path.isfile(file) == False:
         return (f'Error: File not found or is not a regular file: "{file_path}"')
 
-    MAX_CHARS = 10000
+
     try:
         with open(file, 'r') as f:
             file_content_string = f.read(MAX_CHARS)
