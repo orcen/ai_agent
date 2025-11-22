@@ -1,5 +1,3 @@
-# calculator.py
-
 class Calculator:
     def __init__(self):
         self.operators = {
@@ -26,10 +24,17 @@ class Calculator:
         operators = []
 
         for token in tokens:
-            if token in self.operators:
+            if token == '(': # Handle open parenthesis
+                operators.append(token)
+            elif token == ')': # Handle closing parenthesis
+                while operators and operators[-1] != '(': # Pop operators until matching open parenthesis
+                    self._apply_operator(operators, values)
+                operators.pop() # Remove open parenthesis from stack
+            elif token in self.operators:
                 while (
                     operators
                     and operators[-1] in self.operators
+                    and operators[-1] != '(' # Don't consider '(' when checking precedence
                     and self.precedence[operators[-1]] >= self.precedence[token]
                 ):
                     self._apply_operator(operators, values)
@@ -41,6 +46,8 @@ class Calculator:
                     raise ValueError(f"invalid token: {token}")
 
         while operators:
+            if operators[-1] == '(': # If there are unmatched parentheses
+                raise ValueError("Unmatched parentheses")
             self._apply_operator(operators, values)
 
         if len(values) != 1:
